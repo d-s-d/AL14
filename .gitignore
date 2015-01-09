@@ -26,3 +26,19 @@
 *.exe
 *.out
 *.app
+
+#vim files
+*.swp
+*.swo
+
+#
+a.out
+
+*.dSYM
+
+# cmake
+CMakeCache.txt*
+CMakeLists.txt*
+*.cmake
+week*/**/Makefile
+CMakeFiles
