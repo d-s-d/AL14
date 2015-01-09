@@ -45,7 +45,7 @@ void testcase() {
 	int L,P;
 	cin >> L >> P;
 
-	Graph G(2*L);
+	Graph G(L);
 
 	EdgeCapacityMap capacity = get(edge_capacity, G);
 	ReverseEdgeMap rev_edge = get(edge_reverse, G);
@@ -53,8 +53,8 @@ void testcase() {
 
 	Vertex src = add_vertex(G),
 				 trg = add_vertex(G);
-	vector<int> source_in(L);
-	vector<int> target_out(L);
+	vector<int> source_in(L, 0);
+	vector<int> target_out(L, 0);
 	vector<int> cycle_cap(L, 0);
 
 	for( int i = 0; i < L; ++i )
@@ -77,39 +77,16 @@ void testcase() {
 		}
 	}
 
-	int total_target_cap = 0,
-			total_source_cap = 0;
+	int total_target_cap = 0;
 	for( int i = 0; i < L; ++i )
 	{
-		addEdge( i, L+i, INT_MAX, capacity, rev_edge, G );
 		addEdge( src, i, source_in[i], capacity, rev_edge, G );
-		addEdge( L+i, trg, target_out[i], capacity, rev_edge, G );
-		total_source_cap += source_in[i];
+		addEdge( i, trg, target_out[i], capacity, rev_edge, G );
 		total_target_cap += target_out[i];
 	}
 
-	bool yes = false;
-	if( total_source_cap >= total_target_cap )
-	{
-		float flow = push_relabel_max_flow(G, src, trg);
-		if( (int)flow >= total_target_cap )
-		{
-			int i = 0;
-			for( ; i < L; ++i )
-			{
-				Edge e;
-				boost::tie(e, tuples::ignore) = edge(L+i, trg, G);
-				int f = (capacity[e] - res_capacity[e]);
-				if( f < target_out[i] )
-					break;
-			}
-			if( i == L )
-			{
-				yes = true;
-			}
-		}
-	}
-	if( yes )
+	long flow = push_relabel_max_flow(G, src, trg);
+	if( flow == total_target_cap )
 	{
 		cout << "yes";
 	}
