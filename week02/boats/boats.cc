@@ -4,59 +4,73 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]) {
-	pair<int, int> boat;
-	vector<pair<int,int>> boats;
+typedef pair<int, int> Boat;
 
-	int t, n, i, result, front, d;
-	int results[2];
+void testcase();
 
-	cin >> t;
-	while( t > 0 ) {
-		cin >> n;
-		boats.reserve(n);
-		for( i = 0; i < n; ++i ) {
-			cin >> boat.second >> boat.first;
-			boats[i] = boat;
-		}
+int main()
+{
+	ios_base::sync_with_stdio(false);
 
-		sort(boats.begin(), boats.begin()+n);
+	int T;
+	cin >> T;
 
-#ifdef ALDEBUG
-		for( i = 0; i < n; ++i ) {
-			cout << boats[i].first << " " << boats[i].second << endl;
-		}
-#endif
-
-		results[0] = 0;
-		results[1] = 0;
-		if( n > 0 ) {
-			for( d = 1; d >= -1; d-=2 ) {
-				if( d < 0 ) i = n-1;
-				else        i = 0;
-				front = boats[i].first;
-				results[(d+2)/2] = 1;
-#ifdef ALDEBUG
-				cout << "added boat " << i << endl;
-#endif
-				i += d;
-				while( (i >= 0) && (i < n) ) {
-					front += d*boats[i].second;
-					if( d*front < d*boats[i].first )
-						front = boats[i].first;
-					results[(d+2)/2]++;
-#ifdef ALDEBUG
-					cout << "added boat " << i << " front: " << front << endl;
-#endif
-					while( (i>=0) && (i<n) && (d*boats[i].first < d*front) )
-						i += d;
-				}
-				i = n;
-			}
-		}
-		result = max(results[0], results[1]);
-		cout << result << endl;
-
-		t--;
+	while(T--)
+	{
+		testcase();
 	}
+	return 0;
 }
+
+void testcase()
+{
+	Boat boat;
+	int n;
+	cin >> n;
+
+	vector<Boat> boats(n);
+	for( int i = 0; i < n; ++i )
+	{
+		// first: position, second: length
+		// in input: length, position
+		cin >> boat.second >> boat.first;
+		boats[i] = boat;
+	}
+
+	sort(boats.begin(), boats.end());
+
+	int upper = boats[0].first;
+	int i = 1;
+	int count = 1;
+	while( i < n )
+	{
+		if( boats[i].first >= upper )
+		{
+			int j = i;
+			int _upper = numeric_limits<int>::max();
+			int _max_i = i;
+			while( (j < n) && (_upper >= boats[j].first ) )
+			{
+				int _max = max(
+						boats[j].first, // position 
+						upper + boats[j].second // length
+						);
+				if( _max < _upper )
+				{
+					_upper = _max;
+					_max_i = j + 1;
+				}
+				++j;
+			}
+			upper = _upper;
+			i = _max_i;
+			++count;
+		}
+		else
+		{
+			++i;
+		}
+	}
+	cout << count << endl;
+}
+
