@@ -42,3 +42,6 @@ CMakeLists.txt*
 *.cmake
 week*/**/Makefile
 CMakeFiles
+
+pdfs/*
+cpp/*
